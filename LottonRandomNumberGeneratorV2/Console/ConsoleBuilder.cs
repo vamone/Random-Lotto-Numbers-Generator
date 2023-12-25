@@ -1,18 +1,17 @@
 ﻿public class ConsoleBuilder
 {
-    public List<UIConfig> _list { get; set; } = new List<UIConfig>();
+    public List<Action> _list { get; set; } = new List<Action>();
 
-    public void SetUI(Action<UIConfig> value)
+    public void SetUI(Action value)
     {
-        this._list.Add(new UIConfig(value));
+        this._list.Add(value);
     }
 
-    public void Run()
+    public void BuildUI()
     {
-        var actions = this._list.SelectMany(x => x._actions);
-        foreach (var item in actions)
+        foreach (var item in this._list)
         {
-            item.Action?.Invoke();
+            item?.Invoke();
         }
     }
 }

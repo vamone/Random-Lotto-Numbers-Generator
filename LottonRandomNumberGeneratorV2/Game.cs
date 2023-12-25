@@ -4,10 +4,10 @@ namespace LottonRandomNumberGeneratorV2
 {
     public class Game
     {
-        public Game(int id, string name, int mainMaxNumber, int mainCombinatioLength, int bonusMaxNumber, int bonusCombinatioLength, AlgorithmType algorithmType = AlgorithmType.Combination)
+        public Game(GameType type, int mainMaxNumber, int mainCombinatioLength, int bonusMaxNumber, int bonusCombinatioLength, AlgorithmType algorithmType = AlgorithmType.Combination)
         {
-            this.Id = id;
-            this.Name = name;
+            this.Type = type;
+            this.Name = type.ToString();
 
             this.MainMaxNumber = mainMaxNumber;
             this.MainCombinatioLength = mainCombinatioLength;
@@ -18,7 +18,7 @@ namespace LottonRandomNumberGeneratorV2
             this.Algorithm = algorithmType;
         }
 
-        public int Id { get; private set; }
+        public GameType Type { get; private set; }
 
         public string Name { get; set; }    
 

@@ -1,4 +1,4 @@
-﻿namespace LottonRandomNumberGeneratorV2
+﻿namespace LottonRandomNumberGeneratorV2.Enums
 {
     public enum AlgorithmType
     {

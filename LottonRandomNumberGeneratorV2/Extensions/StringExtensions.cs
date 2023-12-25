@@ -17,6 +17,11 @@ public static class StringExtensions
 
     public static int ToInt32(this string value)
     {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            return 0;
+        }
+
         int.TryParse(value, out int returnValue);
 
         return returnValue;

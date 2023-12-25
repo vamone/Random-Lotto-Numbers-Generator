@@ -1,83 +1,93 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using LottonRandomNumberGeneratorV2;
+﻿using LottonRandomNumberGeneratorV2;
+using LottonRandomNumberGeneratorV2.Enums;
 using LottonRandomNumberGeneratorV2.Extensions;
+using LottonRandomNumberGeneratorV2.Helpers;
+using System.Text.RegularExpressions;
 
-Console.WriteLine("Lotto winning numbers generator");
-Console.WriteLine("---");
+var games = new List<Game>();
 
+games.Add(new Game(1, "Euromilions", 50, 5, 12, 2));
+games.Add(new Game(2, "Setforlive", 47, 5, 10, 1));
+games.Add(new Game(3, "Lotto", 59, 6, 0, 0));
+
+var gameIds = games.Select(x => x.Id);
+
+var generator = new Generator();
+var consoleDecorator = new ConsoleDecorator();
 var builder = new ConsoleBuilder();
 
-builder.Add(x =>
+builder.SetUI(x =>
 {
-    x.Action = () => Console.WriteLine("Games:");
-
-    //x.Id = "GAME_TYPE";
-    x.WriteLineBeforeConfig = new WriteLineConfig("Games: ");
-    x.SetGames(y =>
+    x.Add(y =>
     {
-        y.Add(z =>
+        y.Action = () => 
         {
-            z.Id = 1;
-            z.Name = "Euromilions";
-            z.Action = () => z.SetGameInput(50, 5, 12, 2);
-        });
+            consoleDecorator.WriteLine("Lotto winning numbers generator", WriteLineSeparator.After);
+            consoleDecorator.WriteLine("Games:");
+            consoleDecorator.WriteLine("1. Euromilions");
+            consoleDecorator.WriteLine("2. Setforlive");
+            consoleDecorator.WriteLine("3. Lotto");
+            consoleDecorator.WriteLine("4. Custom");
+            consoleDecorator.WriteLine("5. Help");
+            consoleDecorator.Write("Select option: ");
 
-        y.Add(z =>
-        {
-            z.Id = 2;
-            z.Name = "Setforlive";
-            z.Action = () => z.SetGameInput(47, 5, 10, 1);
-        });
-
-        y.Add(z =>
-        {
-            z.Id = 3;
-            z.Name = "Lotto";
-            z.Action = () => z.SetGameInput(59, 6, 0, 0);
-        });
-
-        y.Add(z =>
-        {
-            z.Id = 4;
-            z.Name = "Custom (-g1 -r1 -a2)";
-            z.AddReadLine(o =>
+            int selectedOption = consoleDecorator.ReadLine().ToInt32();
+            if (gameIds.Contains(selectedOption))
             {
-                o.WriteLineBeforeConfig = new WriteLineConfig("Enter command: ", lineSpacers: WriteLineSpacers.Both);
-                o.FuncValidateReadlineValue = (a) => a.IsRegexMatches(@"(-([A-z])\s?([0-9]))");
-                o.ValidationErrorMessage = "Entered value is not valid, try again please.";
-                o.IsRepeatQuestionIfValidationFailed = true;
-            });
-        });
+                var game = games.SingleOrDefault(x => x.Id == selectedOption);
+                if (game != null)
+                {
+                    generator.PrintNumbers(game);
+                }
+            }
 
-        y.Add(z =>
-        {
-            z.Id = 5;
-            z.Name = "Help";
-            z.Action = () => builder.PrintHelp();
-        });
+            if(selectedOption == 4)
+            {
+                consoleDecorator.Write("Enter command: ");
+
+                string readValue = consoleDecorator.ReadLine();
+
+                Game customGame = null;
+
+                var matches = Regex.Matches(readValue.Trim(), @"(-([A-z])\s?([0-9]))").ToList();
+                foreach (var match in matches)
+                {
+                    string actionValue = match.Groups[2].Value;
+                    string numberValue = match.Groups[3].Value;
+
+                    if (actionValue == "g")
+                    {
+                        customGame = games.SingleOrDefault(x => x.Id == numberValue.ToInt32());
+                    }
+
+                    if (customGame != null && actionValue == "r")
+                    {
+                        customGame.Take = numberValue.ToInt32();
+                    }
+
+                    if (customGame != null && actionValue == "a")
+                    {
+                        customGame.Algorithm = numberValue.ToInt32() == 1 ? AlgorithmType.Random : AlgorithmType.Combination;
+                    }
+                }
+
+                generator.PrintNumbers(customGame);
+            }
+
+            if (selectedOption == 5)
+            {
+                consoleDecorator.WriteLine("-g 1 = game and game number", WriteLineSeparator.Before);
+                consoleDecorator.WriteLine("-r 2 = print repetitions and it's number");
+                consoleDecorator.WriteLine("-a 1-2 = algorithm and random 1, combination 2");
+            }
+        };
     });
-    x.WriteLineAfterConfig = new WriteLineConfig("Select game: ", lineSpacers: WriteLineSpacers.Both);
-    x.FuncValidateReadlineValue = (a) => a.IsDigitsOnly();
-    x.ValidationErrorMessage = "Entered value is not valid, try again please.";
-    x.IsRepeatQuestionIfValidationFailed = true;
-});
-
-builder.Add(x =>
-{
-
 });
 
 while (true)
 {
-    var keyValuePairs = builder.GetGameInput();
-    if (keyValuePairs != null)
-    {
-        var generator = new Generator();
-        generator.PrintNumbers(keyValuePairs);
-    }
+    builder.Run();
 
-    Console.WriteLine("---");
-    Console.WriteLine("Press enter to play again...");
-    Console.ReadLine();
+    consoleDecorator.WriteLine("Press enter to play again...", WriteLineSeparator.Before);
+    consoleDecorator.ReadLine();
 }

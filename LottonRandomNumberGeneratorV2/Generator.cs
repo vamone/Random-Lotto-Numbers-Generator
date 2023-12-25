@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using LottonRandomNumberGeneratorV2;
+using LottonRandomNumberGeneratorV2.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -14,10 +15,10 @@ public class Generator
         this._combinationAlgorithm = new CombinationAlgorithm();
     }
 
-    public void PrintNumbers(GameInput gameInput)
+    public void PrintNumbers(Game gameInput)
     {
         Console.WriteLine("---");
-        Console.WriteLine($"Generating for {gameInput.GameName}...");
+        Console.WriteLine($"Generating for {gameInput.Name} using {gameInput.Algorithm} algorithm...");
         Console.WriteLine("---");
 
         try

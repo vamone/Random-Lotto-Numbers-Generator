@@ -8,18 +8,46 @@ namespace LottoRandomNumberGenerator
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Enter number of numbers:");
-            var numberOfNumbers = Console.ReadLine();
+            Console.WriteLine("Lotto random number generator");
+            Console.WriteLine("---");
 
-            Console.WriteLine("Enter picked numbers:");
-            var pickedNumbers = Console.ReadLine();
+            Console.WriteLine("What is the hightest number?");
+            string numberOfNumbers = Console.ReadLine();
+            if(!IsDigitsOnly(numberOfNumbers))
+            {
 
-            Console.WriteLine("Enter number of lucky numbers:");
-            var luckyNumberOfNumbers = Console.ReadLine();
+            }
 
-            Console.WriteLine("Enter picked lucky numbers:");
-            var pickedLuckyNumbers = Console.ReadLine();
+            Console.WriteLine("How many numbers?");
+            string pickedNumbers = Console.ReadLine();
 
+            Console.WriteLine("What is the hightest lucky number?");
+            string luckyNumberOfNumbers = Console.ReadLine();
+
+            string pickedLuckyNumbers = "0";
+
+            if (luckyNumberOfNumbers != "0")
+            {
+                Console.WriteLine("How many lucky numbers?");
+                pickedLuckyNumbers = Console.ReadLine();
+            }   
+
+            PrintNumbers(numberOfNumbers, pickedNumbers, luckyNumberOfNumbers, pickedLuckyNumbers);
+        }
+
+        static bool IsDigitsOnly(string value)
+        {
+            foreach (char c in value)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+
+            return true;
+        }
+
+        static void PrintNumbers(string numberOfNumbers, string pickedNumbers, string luckyNumberOfNumbers, string pickedLuckyNumbers)
+        {
             Console.WriteLine("---");
 
             int intNumberOrNumbers = Convert.ToInt32(numberOfNumbers);
@@ -36,11 +64,20 @@ namespace LottoRandomNumberGenerator
             Console.WriteLine(mainNumbers);
             Console.WriteLine(luckyNumbers);
 
-            Console.ReadLine();
+            var answer = Console.ReadKey();
+            if (answer.Key == ConsoleKey.Enter)
+            {
+                PrintNumbers(numberOfNumbers, pickedNumbers, luckyNumberOfNumbers, pickedLuckyNumbers);
+            }
         }
 
         static ICollection<int> GetRandomNumbers(int totalNumbers, int pickedNumbers)
         {
+            if(totalNumbers <= 0 && pickedNumbers <= 0)
+            {
+                return new List<int>();
+            }
+            
             var randomList = new List<int>();
 
             while (true)
@@ -70,9 +107,9 @@ namespace LottoRandomNumberGenerator
             {
                 var randomNumberProvider = new RNGCryptoServiceProvider();
 
-                byte[] bytes = new byte[8];
+                //byte[] bytes = new byte[7];
 
-                //byte[] randomBytes = new byte[256 * sizeof(int)];
+                byte[] bytes = new byte[256 * sizeof(int)];
 
                 randomNumberProvider.GetBytes(bytes);
 

@@ -1,3 +1,6 @@
 .vs/LottoRandomNumberGenerator/v14/.suo
 LottoRandomNumberGenerator/bin/
 LottoRandomNumberGenerator/obj/
+/.vs
+/LottonRandomNumberGeneratorV2/bin/Debug/net6.0
+/LottonRandomNumberGeneratorV2/obj

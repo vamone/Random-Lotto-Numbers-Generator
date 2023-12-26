@@ -1,123 +1,77 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using LottonRandomNumberGeneratorV2;
-using LottonRandomNumberGeneratorV2.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-
-public class Generator
+﻿public class Generator
 {
+    readonly ConsoleDecorator _consoleDecorator;
+
     readonly IAlgorithm _combinationAlgorithm;
 
-    public Generator()
+    readonly IAlgorithm _randomAlgorithm;
+
+    public Generator(ConsoleDecorator consoleDecorator, IAlgorithm _combinationAlgorithm, IAlgorithm randomAlgorithm)
     {
-        this._combinationAlgorithm = new CombinationAlgorithm();
+        this._consoleDecorator = consoleDecorator;
+        this._combinationAlgorithm = _combinationAlgorithm;
+        this._randomAlgorithm = randomAlgorithm;
     }
 
     public void PrintNumbers(Game gameInput)
     {
-        Console.WriteLine("---");
-        Console.WriteLine($"Generating for {gameInput.Name} using {gameInput.Algorithm} algorithm...");
-        Console.WriteLine("---");
+        this._consoleDecorator.WriteLine($"Generating for {gameInput.Name} using {gameInput.Algorithm} algorithm...", WriteLineSeparator.Both);
 
         try
         {
-            ICollection<int> randomList = new List<int>();
-            ICollection<int> randomLuckyList = new List<int>();
+            List<List<int>> randomList = new List<List<int>>();
+            List<List<int>> randomLuckyList = new List<List<int>>();
 
-            if (gameInput.Algorithm == AlgorithmType.Random)
+            var algorithm = this.ResolveAlgorithm(gameInput.Algorithm);
+
+            randomList = algorithm.Generate(gameInput.MainMaxNumber, gameInput.MainCombinatioLength, gameInput.Take);
+
+            if (gameInput.BonusMaxNumber > 0 && gameInput.BonusCombinatioLength > 0)
             {
-                randomList = this.GetRandomNumbers(gameInput.MainMaxNumber, gameInput.MainCombinatioLength);
-
-                if (gameInput.BonusMaxNumber > 0 && gameInput.BonusCombinatioLength > 0)
-                {
-                    randomLuckyList = this.GetRandomNumbers(gameInput.BonusMaxNumber, gameInput.BonusCombinatioLength);
-                }
+                randomLuckyList = algorithm.Generate(gameInput.BonusMaxNumber, gameInput.BonusCombinatioLength, gameInput.Take);
             }
 
-            if (gameInput.Algorithm == AlgorithmType.Combination)
+            int i = 0;
+            foreach (var random in randomList)
             {
-                randomList = this._combinationAlgorithm.Generate(gameInput.MainMaxNumber, gameInput.MainCombinatioLength).OrderByDescending(_ => Guid.NewGuid()).Take(gameInput.Take).FirstOrDefault();
+                string mainNumbers = string.Join("-", random.OrderBy(_ => _));
+                this._consoleDecorator.Write(mainNumbers);
 
-                if (gameInput.BonusMaxNumber > 0 && gameInput.BonusCombinatioLength > 0)
+                if (randomLuckyList.Any())
                 {
-                    randomLuckyList = this._combinationAlgorithm.Generate(gameInput.BonusMaxNumber, gameInput.BonusCombinatioLength).OrderByDescending(_ => Guid.NewGuid()).Take(gameInput.Take).FirstOrDefault();
+                    this._consoleDecorator.Write(" | ");
+
+                    string luckyNumbers = string.Join("-", randomLuckyList[i].OrderBy(_ => _));
+                    this._consoleDecorator.WriteLine(luckyNumbers);
                 }
-            }
 
-            string mainNumbers = string.Join("-", randomList);
-            Console.WriteLine(mainNumbers);
+                if (randomList.Count > 1 && randomList.Count != (i + 1))
+                {
+                    this._consoleDecorator.WriteLine("---");
+                }
 
-            if (randomLuckyList.Any())
-            {
-                string luckyNumbers = string.Join("-", randomLuckyList);
-                Console.WriteLine(luckyNumbers);
+                i++;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.ToString());
+            this._consoleDecorator.WriteLine(ex.Message, WriteLineSeparator.Before);
+            this._consoleDecorator.WriteLine(ex.ToString(), WriteLineSeparator.After);
         }
-
-        //var answer = Console.ReadKey();
-        //if (answer.Key == ConsoleKey.Enter)
-        //{
-        //    PrintNumbers(numberOfNumbers, pickedNumbers, luckyNumberOfNumbers, pickedLuckyNumbers);
-        //}
     }
 
-    ICollection<int> GetRandomNumbers(int totalNumbers, int pickedNumbers)
+    internal IAlgorithm ResolveAlgorithm(AlgorithmType type)
     {
-        if (totalNumbers <= 0 && pickedNumbers <= 0)
+        if (type == AlgorithmType.Random)
         {
-            return new List<int>();
+            return this._randomAlgorithm;
         }
 
-        var randomList = new List<int>();
-
-        while (true)
+        if (type == AlgorithmType.Combination)
         {
-            int number = this.GetRandomInt(1, totalNumbers);
-
-            bool isExists = randomList.Contains(number);
-            if (!isExists)
-            {
-                randomList.Add(number);
-            }
-
-            int numbersCount = randomList.Count;
-            if (numbersCount == pickedNumbers)
-            {
-                break;
-            }
+            return this._combinationAlgorithm;
         }
 
-        return randomList;
-    }
-
-    int GetRandomInt(int min, int max)
-    {
-        uint scale = uint.MaxValue;
-        while (scale == uint.MaxValue)
-        {
-            //var randomNumberProvider = new RNGCryptoServiceProvider();
-
-            var random = RandomNumberGenerator.Create();
-            var bytes = new byte[256 * sizeof(int)]; // 4 bytes
-            random.GetNonZeroBytes(bytes);
-
-            //byte[] bytes = new byte[7];
-
-            //byte[] bytes = new byte[256 * sizeof(int)];
-
-            //randomNumberProvider.GetBytes(bytes);
-
-            scale = BitConverter.ToUInt32(bytes, 0);
-        }
-
-        return (int)(min + (max - min) *
-            (scale / (double)uint.MaxValue));
+        throw new ArgumentOutOfRangeException(nameof(type));
     }
 }

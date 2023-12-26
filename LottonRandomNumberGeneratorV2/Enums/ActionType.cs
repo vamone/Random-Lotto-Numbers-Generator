@@ -1,9 +1,6 @@
-﻿namespace LottonRandomNumberGeneratorV2.Enums
+﻿public enum ActionType
 {
-    public enum ActionType
-    {
-        None = 0,
-        Custom = 4,
-        Help = 5
-    }
+    None = 0,
+    Custom = 4,
+    Help = 5
 }

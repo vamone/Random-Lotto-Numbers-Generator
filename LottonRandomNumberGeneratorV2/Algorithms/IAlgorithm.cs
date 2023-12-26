@@ -1,4 +1,4 @@
 ﻿public interface IAlgorithm
 {
-    ICollection<ICollection<int>> Generate(int maxNumber, int combinationLength);
+    List<List<int>> Generate(int maxNumber, int combinationLength, int take);
 }

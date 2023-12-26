@@ -1,8 +1,8 @@
 ﻿public class CombinationAlgorithm : IAlgorithm
 {
-    public ICollection<ICollection<int>> Generate(int maxNumber, int combinationLength)
+    public List<List<int>> Generate(int maxNumber, int combinationLength, int take)
     {
-        var returnValue = new List<ICollection<int>>();
+        var returnValue = new List<List<int>>();
 
         int[] numbers = new int[combinationLength];
 
@@ -12,10 +12,10 @@
             GenerateNextNumber(returnValue, numbers, 1, combinationLength, maxNumber);
         }
 
-        return returnValue;
+        return returnValue.OrderByDescending(_ => Guid.NewGuid()).Take(take).ToList();
     }
 
-    void GenerateNextNumber(ICollection<ICollection<int>> returnValue, int[] numbers, int index, int combinationLength, int maxNumber)
+    void GenerateNextNumber(List<List<int>> returnValue, int[] numbers, int index, int combinationLength, int maxNumber)
     {
         if (index >= combinationLength)
         {

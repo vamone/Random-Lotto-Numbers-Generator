@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace LottonRandomNumberGeneratorV2.Extensions;
-
 public static class StringExtensions
 {
     public static bool IsDigitsOnly(this string value)

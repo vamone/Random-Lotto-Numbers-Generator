@@ -1,18 +1,25 @@
 ﻿public class CombinationAlgorithm : IAlgorithm
 {
-    public List<List<int>> Generate(int maxNumber, int combinationLength, int take)
+    public AlgorithmType AlgorithmType { get; } = AlgorithmType.Combination;
+
+    public virtual List<List<int>> Generate(int maxNumber, int combinationLength)
     {
         var returnValue = new List<List<int>>();
+
+        if (maxNumber <= 0 && combinationLength <= 0)
+        {
+            return returnValue;
+        }
 
         int[] numbers = new int[combinationLength];
 
         for (int i = 1; i <= maxNumber - combinationLength + 1; i++)
         {
             numbers[0] = i;
-            GenerateNextNumber(returnValue, numbers, 1, combinationLength, maxNumber);
+            this.GenerateNextNumber(returnValue, numbers, 1, combinationLength, maxNumber);
         }
 
-        return returnValue.OrderByDescending(_ => Guid.NewGuid()).Take(take).ToList();
+        return returnValue.ToList();
     }
 
     void GenerateNextNumber(List<List<int>> returnValue, int[] numbers, int index, int combinationLength, int maxNumber)

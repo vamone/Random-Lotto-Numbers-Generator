@@ -3,4 +3,5 @@
     None = 0,
     Random = 1,
     Combination = 2,
+    Index = 3
 }

@@ -9,6 +9,11 @@ public class GameBox
         this._games = games;
     }
 
+    public List<Game> GetGames()
+    {
+        return this._games;
+    }
+
     public bool IsGameOption(int option)
     {
         return this._games.Any(x => (int)x.Type == option);
@@ -36,7 +41,25 @@ public class GameBox
 
             if (customGame != null && actionValue == "a")
             {
-                customGame.Algorithm = numberValue.ToInt32() == (int)AlgorithmType.Random ? AlgorithmType.Random : AlgorithmType.Combination;
+                if(numberValue.ToInt32() == (int)AlgorithmType.Random)
+                {
+                    customGame.Algorithm = AlgorithmType.Random;
+                }
+
+                if (numberValue.ToInt32() == (int)AlgorithmType.Combination)
+                {
+                    customGame.Algorithm = AlgorithmType.Combination;
+                }
+
+                if (numberValue.ToInt32() == (int)AlgorithmType.Index)
+                {
+                    customGame.Algorithm = AlgorithmType.Index;
+                }
+            }
+
+            if (customGame != null && actionValue == "c")
+            {
+                customGame.ChunkInto = numberValue.ToInt32();
             }
         }
 

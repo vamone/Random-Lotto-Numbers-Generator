@@ -1,75 +1,41 @@
-﻿var games = new List<Game>();
+﻿using LottonRandomNumberGeneratorV2.Algorithms;
+using LottonRandomNumberGeneratorV2.Console;
+using LottonRandomNumberGeneratorV2.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-games.Add(new Game(GameType.Euromilions, 50, 5, 12, 2));
-games.Add(new Game(GameType.Setforlive, 47, 5, 10, 1));
-games.Add(new Game(GameType.Lotto, 59, 6, 0, 0));
+var builder = Host.CreateApplicationBuilder(args);
 
-var gameBox = new GameBox(games);
-
-var consoleDecorator = new ConsoleDecorator();
-var generator = new Generator(consoleDecorator, new CombinationAlgorithm(), new RandomAlgorithm());
-
-var builder = new ConsoleBuilder();
-
-builder.SetUI(() =>
+builder.Services.AddTransient<ConsoleRunner>();
+builder.Services.AddTransient<ConsoleDecorator>();
+builder.Services.AddTransient<ConsoleBuilder>();
+builder.Services.AddTransient<Generator>();
+builder.Services.AddTransient<Manager>();
+builder.Services.AddTransient<IAlgorithm, CombinationAlgorithm>();
+builder.Services.AddTransient<List<IAlgorithm>>(x =>
 {
-    consoleDecorator.WriteLine("Lotto winning numbers generator", WriteLineSeparator.After);
-    consoleDecorator.WriteLine("Games:");
-
-    int i = 0;
-    foreach (var item in games)
+    return new List<IAlgorithm>
     {
-        i++;
-        consoleDecorator.WriteLine($"{i}. {item.Name}");
-    }
-
-    consoleDecorator.WriteLine("4. Custom");
-    consoleDecorator.WriteLine("5. Help");
-
-    consoleDecorator.Write("Select option: ");
-     
-    int selectedOption = consoleDecorator.ReadLine().ToInt32(); //Add validation numetric
-
-    if (gameBox.IsGameOption(selectedOption))
-    {
-        var game = gameBox.ResolveGame(selectedOption);
-        if (game != null)
-        {
-            generator.PrintNumbers(game);
-        }
-    }
-
-    if (selectedOption == (int)ActionType.Custom)
-    {
-        consoleDecorator.Write("Enter command: ");
-
-        string commandValue = consoleDecorator.ReadLine(); //Add validation regex
-
-        var customGame = gameBox.ResolveGame(commandValue);
-        if (customGame != null)
-        {
-            generator.PrintNumbers(customGame);
-        }
-    }
-
-    if (selectedOption == (int)ActionType.Help)
-    {
-        consoleDecorator.WriteLine("-g 1 = game and game number", WriteLineSeparator.Before);
-        consoleDecorator.WriteLine("-r 2 = print repetitions and it's number");
-        consoleDecorator.WriteLine("-a 1-2 = algorithm and random 1, combination 2");
-    }
+        new RandomAlgorithm(),
+        new CombinationAlgorithm(),
+        new IndexAlgorithm(new CombinationAlgorithm())
+    };
 });
-
-while (true)
+builder.Services.AddTransient<List<Game>>(x =>
 {
-    builder.BuildUI();
+    return new List<Game>
+    {
+        new Game(GameType.Euromilions, 50, 5, 12, 2, AlgorithmType.Random),
+        new Game(GameType.Setforlive, 47, 5, 10, 1, AlgorithmType.Random),
+        new Game(GameType.Lotto, 59, 6, 0, 0, AlgorithmType.Combination)
+    };
+});
+builder.Services.AddTransient<GameBox>();
 
-    consoleDecorator.WriteLine("Press enter to play again...", WriteLineSeparator.Before);
-    consoleDecorator.ReadLine();
+var host = builder.Build();
 
-    //var answer = Console.ReadKey();
-    //if (answer.Key == ConsoleKey.Enter)
-    //{
-    //    PrintNumbers(numberOfNumbers, pickedNumbers, luckyNumberOfNumbers, pickedLuckyNumbers);
-    //}
-}
+var console = ActivatorUtilities.CreateInstance<ConsoleRunner>(host.Services);
+console.Run();
+
+await host.RunAsync();

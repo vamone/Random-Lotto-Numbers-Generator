@@ -5,7 +5,11 @@ VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LottoRandomNumberGenerator", "LottoRandomNumberGenerator\LottoRandomNumberGenerator.csproj", "{C94224ED-D797-4661-9DF7-76BB3F21E08F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LottonRandomNumberGeneratorV2", "LottonRandomNumberGeneratorV2\LottonRandomNumberGeneratorV2.csproj", "{0A407A03-EF9D-46C6-BB8D-C18A05DEBF23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LottonRandomNumberGeneratorV2", "LottonRandomNumberGeneratorV2\LottonRandomNumberGeneratorV2.csproj", "{0A407A03-EF9D-46C6-BB8D-C18A05DEBF23}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{86AE251C-FDDD-47B0-BBB1-318F22E72317}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{5E066C37-B4E0-492A-BEAF-FE29736FDBE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +25,18 @@ Global
 		{0A407A03-EF9D-46C6-BB8D-C18A05DEBF23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A407A03-EF9D-46C6-BB8D-C18A05DEBF23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A407A03-EF9D-46C6-BB8D-C18A05DEBF23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E066C37-B4E0-492A-BEAF-FE29736FDBE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E066C37-B4E0-492A-BEAF-FE29736FDBE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E066C37-B4E0-492A-BEAF-FE29736FDBE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E066C37-B4E0-492A-BEAF-FE29736FDBE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5E066C37-B4E0-492A-BEAF-FE29736FDBE1} = {86AE251C-FDDD-47B0-BBB1-318F22E72317}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4B9B656-E71C-4F3B-A0F6-242EAAA26AD9}
 	EndGlobalSection
 EndGlobal

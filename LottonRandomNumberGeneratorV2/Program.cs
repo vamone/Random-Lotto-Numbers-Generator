@@ -13,13 +13,15 @@ builder.Services.AddTransient<ConsoleBuilder>();
 builder.Services.AddTransient<Generator>();
 builder.Services.AddTransient<Manager>();
 builder.Services.AddTransient<IAlgorithm, CombinationAlgorithm>();
+builder.Services.AddTransient<IAlgorithm, RandomAlgorithm>();
+builder.Services.AddTransient<IAlgorithm, IndexAlgorithm>();
 builder.Services.AddTransient<List<IAlgorithm>>(x =>
 {
     return new List<IAlgorithm>
     {
         new RandomAlgorithm(),
         new CombinationAlgorithm(),
-        new IndexAlgorithm(new CombinationAlgorithm())
+        new IndexAlgorithm(new CombinationAlgorithm(), new RandomAlgorithm())
     };
 });
 builder.Services.AddTransient<List<Game>>(x =>

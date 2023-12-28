@@ -152,7 +152,7 @@ namespace Tests
             {
                 new TestRandomAlgorithm(),
                 new TestCombinationAlgorithm(),
-                new IndexAlgorithm(new TestCombinationAlgorithm())
+                new IndexAlgorithm(new TestCombinationAlgorithm(), new TestRandomAlgorithm())
             });
         }
     }

@@ -4,9 +4,12 @@
     {
         readonly IAlgorithm _combinationAlgorithm;
 
-        public IndexAlgorithm(CombinationAlgorithm combinationAlgorithm)
+        readonly IAlgorithm _randomAlgorithm;
+
+        public IndexAlgorithm(CombinationAlgorithm combinationAlgorithm, RandomAlgorithm randomAlgorithm)
         {
             this._combinationAlgorithm = combinationAlgorithm;
+            this._randomAlgorithm = randomAlgorithm;
         }
 
         public AlgorithmType AlgorithmType => AlgorithmType.Index;
@@ -15,11 +18,7 @@
         {
             var combinationNumbers = this._combinationAlgorithm.Generate(maxNumber, combinationLength);
 
-            var rand = new Random();
-            int minValue = 1;
-            int maxValue = combinationNumbers.Count();
-
-            int randomNumber = rand.Next(minValue, maxValue);
+            int randomNumber = this._randomAlgorithm.Generate(combinationNumbers.Count(), 1)[0][0];
 
             return new List<List<int>> { combinationNumbers[randomNumber].ToList() };
         }

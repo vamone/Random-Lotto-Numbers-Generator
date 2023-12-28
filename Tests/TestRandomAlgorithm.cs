@@ -1,15 +1,12 @@
 ﻿namespace Tests
 {
-    public class TestRandomAlgorithm : IAlgorithm
+    public class TestRandomAlgorithm : RandomAlgorithm
     {
         public AlgorithmType AlgorithmType { get; } = AlgorithmType.Random;
 
-        public List<List<int>> Generate(int maxNumber, int combinationLength)
+        public override List<List<int>> Generate(int maxNumber, int combinationLength)
         {
-            return new List<List<int>> 
-            { 
-                Enumerable.Range(1, combinationLength).ToList() 
-            };
+            return base.Generate(maxNumber, combinationLength);        
         }
     }
 }

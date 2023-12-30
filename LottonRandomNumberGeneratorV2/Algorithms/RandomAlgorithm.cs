@@ -2,7 +2,7 @@
 
 public class RandomAlgorithm : IAlgorithm
 {
-    public AlgorithmType AlgorithmType { get; } = AlgorithmType.Random;
+    public AlgorithmType Type { get; } = AlgorithmType.Random;
 
     public virtual List<List<int>> Generate(int maxNumber, int combinationLength)
     {

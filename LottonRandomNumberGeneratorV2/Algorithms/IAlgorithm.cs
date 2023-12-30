@@ -1,6 +1,6 @@
 ﻿public interface IAlgorithm
 {
-    AlgorithmType AlgorithmType { get; }
+    AlgorithmType Type { get; }
 
     List<List<int>> Generate(int maxNumber, int combinationLength);
 }

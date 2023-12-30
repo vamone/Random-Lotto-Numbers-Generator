@@ -1,5 +1,4 @@
 ﻿using LottonRandomNumberGeneratorV2.Algorithms;
-using LottonRandomNumberGeneratorV2.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -47,7 +46,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Random) { MainCombinatioLength = 5, BonusCombinatioLength = 2 };
+            var game = new GameConfig(AlgorithmType.Random) { MainCombinatioLength = 5, BonusCombinatioLength = 2 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -63,7 +62,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Random) { MainCombinatioLength = 5, BonusCombinatioLength = 2, Take = 3 };
+            var game = new GameConfig(AlgorithmType.Random) { MainCombinatioLength = 5, BonusCombinatioLength = 2, Take = 3 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -81,7 +80,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2 };
+            var game = new GameConfig(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -97,7 +96,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2, Take = 3 };
+            var game = new GameConfig(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2, Take = 3 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -115,7 +114,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2, ChunkInto = 3 };
+            var game = new GameConfig(AlgorithmType.Combination) { MainCombinatioLength = 5, BonusCombinatioLength = 2, ChunkInto = 3 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -133,7 +132,7 @@ namespace Tests
         {
             //Arrange
             var manager = this.GetManager();
-            var game = new Game(AlgorithmType.Index) { MainCombinatioLength = 5, Take = 3 };
+            var game = new GameConfig(AlgorithmType.Index) { MainCombinatioLength = 5, Take = 3 };
 
             //Act 
             var numbers = manager.ManageNumbers(game);
@@ -146,9 +145,9 @@ namespace Tests
             Assert.AreEqual("1-2-3-4-5", numbers[2]);
         }
 
-        private Manager GetManager()
+        private GameManager GetManager()
         {
-            return new Manager(new List<IAlgorithm>
+            return new GameManager(new List<IAlgorithm>
             {
                 new TestRandomAlgorithm(),
                 new TestCombinationAlgorithm(),

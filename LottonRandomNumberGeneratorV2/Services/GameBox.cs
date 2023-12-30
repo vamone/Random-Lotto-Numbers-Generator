@@ -1,73 +1,40 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.VisualBasic;
+using System.Text.RegularExpressions;
 
 public class GameBox
 {
-    readonly List<Game> _games;
+    readonly IEnumerable<IGameConfig> _games;
 
-    public GameBox(List<Game> games)
+    readonly IEnumerable<IAlgorithm> _algorithms;
+
+    public GameBox(IEnumerable<IGameConfig> games, IEnumerable<IAlgorithm> algorithms)
     {
         this._games = games;
+        this._algorithms = algorithms;
     }
 
-    public List<Game> GetGames()
+    public IEnumerable<IGameConfig> GetGames()
     {
         return this._games;
     }
 
-    public bool IsGameOption(int option)
+    public IEnumerable<IAlgorithm> GetAlgorithms()
     {
-        return this._games.Any(x => (int)x.Type == option);
+        return this._algorithms;
     }
 
-    public Game ResolveGame(string command)
+    public IGameConfig GetGameById(int id)
     {
-        Game customGame = null;
-
-        var matches = Regex.Matches(command.Trim(), @"(-([A-z])\s?([0-9]))").ToList();
-        foreach (var match in matches)
-        {
-            string actionValue = match.Groups[2].Value;
-            string numberValue = match.Groups[3].Value;
-
-            if (actionValue == "g")
-            {
-                customGame = this._games.SingleOrDefault(x => (int)x.Type == numberValue.ToInt32());
-            }
-
-            if (customGame != null && actionValue == "r")
-            {
-                customGame.Take = numberValue.ToInt32();
-            }
-
-            if (customGame != null && actionValue == "a")
-            {
-                if(numberValue.ToInt32() == (int)AlgorithmType.Random)
-                {
-                    customGame.Algorithm = AlgorithmType.Random;
-                }
-
-                if (numberValue.ToInt32() == (int)AlgorithmType.Combination)
-                {
-                    customGame.Algorithm = AlgorithmType.Combination;
-                }
-
-                if (numberValue.ToInt32() == (int)AlgorithmType.Index)
-                {
-                    customGame.Algorithm = AlgorithmType.Index;
-                }
-            }
-
-            if (customGame != null && actionValue == "c")
-            {
-                customGame.ChunkInto = numberValue.ToInt32();
-            }
-        }
-
-        return customGame;
+        return this._games.SingleOrDefault(x => (int)x.Type == id);
     }
 
-    public Game ResolveGame(int gameId)
+    public IAlgorithm GetAlgorithmById(int id)
     {
-        return this.ResolveGame($"-g{gameId}");
+        return this._algorithms.SingleOrDefault(x => (int)x.Type == id);
+    }
+
+    public IEnumerable<string> GenerateNumbers(IGameConfig gameConfig, IAlgorithm algorithm, int numberOfGames)
+    {
+        return new List<string> { "1-2-3-4-5-6 | 1-2", "1-2-3-4-5-6" };
     }
 }

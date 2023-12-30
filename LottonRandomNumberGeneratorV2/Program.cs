@@ -11,7 +11,7 @@ builder.Services.AddTransient<GameManager>();
 
 builder.Services.AddTransient<IAlgorithm, CombinationAlgorithm>();
 builder.Services.AddTransient<IAlgorithm, RandomAlgorithm>();
-builder.Services.AddTransient<IAlgorithm>(x => new IndexAlgorithm(x.GetService<CombinationAlgorithm>(), x.GetService<RandomAlgorithm>()));
+builder.Services.AddTransient<IAlgorithm>(x => new IndexAlgorithm(new CombinationAlgorithm(), new RandomAlgorithm()));
 
 builder.Services.AddTransient<IGameConfig>(x => new GameConfig(GameType.Euromilions).ConfigSetOfNumbers(50, 5).ConfigSetOfNumbers(12, 2));
 builder.Services.AddTransient<IGameConfig>(x => new GameConfig(GameType.Setforlive).ConfigSetOfNumbers(47, 5).ConfigSetOfNumbers(10, 1));

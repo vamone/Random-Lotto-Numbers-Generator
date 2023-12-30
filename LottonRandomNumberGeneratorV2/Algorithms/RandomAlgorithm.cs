@@ -1,12 +1,13 @@
-﻿using System.Security.Cryptography;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 
 public class RandomAlgorithm : IAlgorithm
 {
     public AlgorithmType Type { get; } = AlgorithmType.Random;
 
-    public virtual List<List<int>> Generate(int maxNumber, int combinationLength)
+    public virtual Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength)
     {
-        var result = new List<List<int>>();
+        var result = new Dictionary<int, List<int>>();
 
         if (maxNumber <= 0 && combinationLength <= 0)
         {
@@ -32,7 +33,7 @@ public class RandomAlgorithm : IAlgorithm
             }
         }
 
-        result.Add(randomList);
+        result.Add(0, randomList);
 
         return result;
     }

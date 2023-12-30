@@ -14,18 +14,22 @@
 
         public AlgorithmType Type => AlgorithmType.Index;
 
-        public List<List<int>> Generate(int maxNumber, int combinationLength)
+        public Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength)
         {
+            var returnValue = new Dictionary<int, List<int>>();
+
             if (maxNumber <= 0 || combinationLength <= 0)
             {
-                return new List<List<int>>();
+                return returnValue;
             }
 
             var combinationNumbers = this._combinationAlgorithm.Generate(maxNumber, combinationLength);
 
             int randomNumber = this._randomAlgorithm.Generate(combinationNumbers.Count(), 1)[0][0];
 
-            return new List<List<int>> { combinationNumbers[randomNumber].ToList() };
+            returnValue.Add(0, combinationNumbers[randomNumber]);
+
+            return returnValue;
         }
     }
 }

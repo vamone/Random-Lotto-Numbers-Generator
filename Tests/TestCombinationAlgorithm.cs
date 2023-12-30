@@ -4,16 +4,17 @@
     {
         public AlgorithmType AlgorithmType { get; } = AlgorithmType.Combination;
 
-        public override List<List<int>> Generate(int maxNumber, int combinationLength)
+        public override Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength)
         {
-            return new List<List<int>> 
-            { 
-                Enumerable.Range(1, combinationLength).ToList(), 
-                Enumerable.Range(1, combinationLength).ToList(), 
-                Enumerable.Range(1, combinationLength).ToList(), 
-                Enumerable.Range(1, combinationLength).ToList(), 
-                Enumerable.Range(1, combinationLength).ToList() 
-            };
+            return null; 
+            //new List<List<int>> 
+            //{ 
+            //    Enumerable.Range(1, combinationLength).ToList(), 
+            //    Enumerable.Range(1, combinationLength).ToList(), 
+            //    Enumerable.Range(1, combinationLength).ToList(), 
+            //    Enumerable.Range(1, combinationLength).ToList(), 
+            //    Enumerable.Range(1, combinationLength).ToList() 
+            //};
         }
     }
 }

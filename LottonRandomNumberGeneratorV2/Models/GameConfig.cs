@@ -4,6 +4,8 @@
 
     string Name { get; }
 
+    List<SetConfig> Sets { get; }
+
     IGameConfig ConfigSetOfNumbers(int maxNumber, int combinatiocLength);
 }
 
@@ -19,7 +21,7 @@ public class GameConfig : IGameConfig
 
     public string Name { get; private set; }
 
-    public ICollection<SetConfig> Sets { get; private set; } = new List<SetConfig>();
+    public List<SetConfig> Sets { get; private set; } = new List<SetConfig>();
 
     public IGameConfig ConfigSetOfNumbers(int maxNumber, int combinationLength)
     {

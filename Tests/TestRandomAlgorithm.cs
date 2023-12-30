@@ -4,7 +4,7 @@
     {
         public AlgorithmType AlgorithmType { get; } = AlgorithmType.Random;
 
-        public override List<List<int>> Generate(int maxNumber, int combinationLength)
+        public override Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength)
         {
             return base.Generate(maxNumber, combinationLength);        
         }

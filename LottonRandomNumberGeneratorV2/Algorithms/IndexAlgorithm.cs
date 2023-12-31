@@ -14,9 +14,9 @@
 
         public AlgorithmType Type => AlgorithmType.Index;
 
-        public Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength)
+        public List<List<int>> Generate(int maxNumber, int combinationLength)
         {
-            var returnValue = new Dictionary<int, List<int>>();
+            var returnValue = new List<List<int>>();
 
             if (maxNumber <= 0 || combinationLength <= 0)
             {
@@ -27,7 +27,7 @@
 
             int randomNumber = this._randomAlgorithm.Generate(combinationNumbers.Count(), 1)[0][0];
 
-            returnValue.Add(0, combinationNumbers[randomNumber]);
+            returnValue.Add(combinationNumbers[randomNumber]);
 
             return returnValue;
         }

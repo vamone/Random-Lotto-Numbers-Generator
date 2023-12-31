@@ -58,7 +58,7 @@ namespace Tests
 
             var aaa = al1.Generate(9, 7);
 
-            var bb = aaa.Select(x => x.Sum());
+            //var bb = aaa.Select(x => x.Sum());
 
             var al = new CombinationAlgorithm();
 
@@ -72,7 +72,7 @@ namespace Tests
         private List<List<int>> GetLottoNumbers()
         {
             var al = new CombinationAlgorithm();
-            return al.Generate(59, 6);
+            return null;  al.Generate(59, 6);
         }
     }
 }

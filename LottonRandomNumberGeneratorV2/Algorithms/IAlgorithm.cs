@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-public interface IAlgorithm
+﻿public interface IAlgorithm
 {
     AlgorithmType Type { get; }
 
-    Dictionary<int, List<int>> Generate(int maxNumber, int combinationLength);
+    List<List<int>> Generate(int maxNumber, int combinationLength);
 }

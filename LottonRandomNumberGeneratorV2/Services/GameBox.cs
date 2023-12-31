@@ -40,12 +40,12 @@
         {
             for (int i = 0; i < numberOfGames; i++)
             {
-                var numbers = new Dictionary<int, List<int>>();
+                var numbers = new List<List<List<int>>>();
 
-                for (int j = 0; j < setsCount; j++)
+                foreach (var configSet in gameConfig.Sets)
                 {
-                    var setNumbers = algorithm.Generate(gameConfig.Sets[j].MaxValueNumber, gameConfig.Sets[j].CombinationLength).SelectMany(x => x.Value).ToList();
-                    numbers.Add(j, setNumbers);
+                    var setNumbers = algorithm.Generate(configSet.MaxValueNumber, configSet.CombinationLength);
+                    numbers.Add(setNumbers);
                 }
 
                 returnResult.Add(this.FormatNumbers(numbers));
@@ -54,42 +54,52 @@
 
         if (algorithm.Type == AlgorithmType.Combination)
         {
-            var numbers = new Dictionary<int, List<int>>();
+            var dictionaryNumbers = new Dictionary<int, List<List<int>>>();
 
-            for (int i = 0; i < setsCount; i++)
+            int i = 0;
+            foreach (var configSet in gameConfig.Sets)
             {
-                var combinations = algorithm.Generate(gameConfig.Sets[i].MaxValueNumber, gameConfig.Sets[i].CombinationLength);
+                var combinations = algorithm.Generate(configSet.MaxValueNumber, configSet.CombinationLength);
 
                 int combinationsCount = combinations.Count();
                 int chunkSize = combinationsCount / numberOfGames;
 
-                var chunked = combinations.Chunk(chunkSize).SelectMany(x => x.OrderBy(_ => Guid.NewGuid())).Take(numberOfGames).ToList();
-                for (int j = i; j < chunked.Count(); j++)
+                int j = i;
+                var chunked = combinations.Chunk(chunkSize)
+                    .OrderBy(_ => Guid.NewGuid())
+                    .Take(numberOfGames)
+                    .Select(x => x.OrderBy(_ => Guid.NewGuid()).Take(1).ToList())
+                    .ToList();
+
+                foreach (var chunk in chunked)
                 {
-                    numbers.Add(i > 0 ? (j * setsCount) - 1 : j * setsCount, chunked[j].Value);
+                    dictionaryNumbers.Add(i > 0 ? (j * setsCount) - 1 : j * setsCount, chunk);
                     j++;
                 }
+
+                i++;
             }
 
-            var chunkedNumbers = numbers.OrderBy(_ => _.Key).Chunk(setsCount).ToList();
-            for (int i = 0; i < chunkedNumbers.Count(); i++)
+            var chunkedNumbers = dictionaryNumbers.OrderBy(_ => _.Key).Chunk(setsCount).ToList();
+            foreach(var chunk in chunkedNumbers)
             {
-                var dic = chunkedNumbers[i].ToDictionary(x => x.Key, x => x.Value);
-                returnResult.Add(this.FormatNumbers(dic));
+                returnResult.Add(this.FormatNumbers(chunk.Select(x => x.Value).ToList()));
             }
         }
 
         return returnResult;
     }
 
-    public string FormatNumbers(Dictionary<int, List<int>> numbers)
+    public string FormatNumbers(List<List<List<int>>> numbers)
     {
         var subList = new List<string>();
 
-        var numbersToJoin = numbers.Select(x => x.Value);
-        foreach (var items in numbersToJoin)
+        foreach (var items in numbers)
         {
-            subList.Add(string.Join("-", items.OrderBy(_ => _)));
+            foreach (var item in items)
+            {
+                subList.Add(string.Join("-", item.OrderBy(_ => _)));
+            }
         }
 
         return string.Join(" | ", subList);

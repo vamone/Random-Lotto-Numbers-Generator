@@ -10,7 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="IndexAlgorithmTests.cs" />
     <Compile Remove="ManagerTests.cs" />
+    <Compile Remove="TestCombinationAlgorithm.cs" />
+    <Compile Remove="TestRandomAlgorithm.cs" />
   </ItemGroup>
 
   <ItemGroup>

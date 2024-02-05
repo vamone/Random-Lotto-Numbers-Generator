@@ -7,6 +7,11 @@
     List<SetConfig> Sets { get; }
 
     IGameConfig ConfigSetOfNumbers(int maxNumber, int combinatiocLength);
+
+    string Url { get; }
+
+    IGameConfig SetUrl(string url);
+
 }
 
 public class GameConfig : IGameConfig
@@ -28,6 +33,14 @@ public class GameConfig : IGameConfig
         this.Sets.Add(new SetConfig(maxNumber, combinationLength));
         return this;
     }
+
+    public IGameConfig SetUrl(string url)
+    {
+        this.Url = url;
+        return this;
+    }
+
+    public string Url { get; private set; }
 }
 
 public class SetConfig

@@ -7,3 +7,5 @@ LottoRandomNumberGenerator/obj/
 /Tests/obj
 /Tests/bin/Debug/net6.0
 /LottonRandomNumberGeneratorV2/bin/Release/net6.0
+/LottonRandomNumberGeneratorV2/Properties/PublishProfiles/FolderProfile.pubxml.user
+/Tests/bin/Release/net6.0

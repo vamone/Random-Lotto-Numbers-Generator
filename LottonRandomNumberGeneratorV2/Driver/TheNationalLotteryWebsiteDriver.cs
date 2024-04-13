@@ -1,4 +1,6 @@
-﻿using LottonRandomNumberGeneratorV2.Extensions;
+﻿using LottonRandomNumberGeneratorV2.Configs;
+using LottonRandomNumberGeneratorV2.Extensions;
+using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -11,9 +13,12 @@ namespace LottonRandomNumberGeneratorV2.Driver
 
         IWebDriver _driver;
 
-        public TheNationalLotteryWebsiteDriver(IWebDriver driver)
+        readonly IOptions<LoginConfig> _loginConfig;
+
+        public TheNationalLotteryWebsiteDriver(IWebDriver driver, IOptions<LoginConfig> loginConfig)
         {
             this._driver = driver;
+            this._loginConfig = loginConfig;
         }
 
         bool IsEnabled { get; set; } = false;
@@ -53,10 +58,10 @@ namespace LottonRandomNumberGeneratorV2.Driver
             if (this.IsEnabled)
             {
                 var elementUserName = this._driver.FindElementWithRetry(By.CssSelector("#form_username"));
-                elementUserName.SendKeys("");
+                elementUserName.SendKeys(this._loginConfig.Value.Email);
 
                 var elementPassword = this._driver.FindElementWithRetry(By.CssSelector("#form_password"));
-                elementPassword.SendKeys("");
+                elementPassword.SendKeys(this._loginConfig.Value.Password);
 
                 var elementDateOfBirthDay = Task.Run(() => this._driver.FindElementWithRetry(By.CssSelector("#form_dateOfBirth_day"), isIngnoredIfNotFound: true));
                 var elementDateOfBirthMonth = Task.Run(() => this._driver.FindElementWithRetry(By.CssSelector("#form_dateOfBirth_month"), isIngnoredIfNotFound: true));
@@ -67,13 +72,13 @@ namespace LottonRandomNumberGeneratorV2.Driver
                 if (elementDateOfBirthDay.Result != null && elementDateOfBirthMonth.Result != null && elementDateOfBirthYear.Result != null)
                 {
                     var selectDateOfBirthDay = new SelectElement(elementDateOfBirthDay.Result);
-                    selectDateOfBirthDay.SelectByText("");
+                    selectDateOfBirthDay.SelectByText(this._loginConfig.Value.DateOfBirth.Day.ToString());
 
                     var selectDateOfBirthMonth = new SelectElement(elementDateOfBirthMonth.Result);
-                    selectDateOfBirthMonth.SelectByText("");
+                    selectDateOfBirthMonth.SelectByText(this._loginConfig.Value.DateOfBirth.Month);
 
                     var selectDateOfBirthYear = new SelectElement(elementDateOfBirthYear.Result);
-                    selectDateOfBirthYear.SelectByText("");
+                    selectDateOfBirthYear.SelectByText(this._loginConfig.Value.DateOfBirth.Year.ToString());
                 }
 
                 var elementSubmitButton = this._driver.FindElementWithRetry(By.CssSelector("#login_submit_bttn"));
@@ -132,15 +137,15 @@ namespace LottonRandomNumberGeneratorV2.Driver
             if (this.IsEnabled)
             {
                 this._driver.Navigate().GoToUrl(url);
-                this.FindElementAndJSClick("#euromillions_dbg_play_page");
+                this.FindElementAndJSClick("#euromillions_dbg_play_page", isIgnoredIfNotFound: true);
             }
         }
 
-        void FindElementAndJSClick(string cssSelector)
+        void FindElementAndJSClick(string cssSelector, bool isIgnoredIfNotFound = false)
         {
             if (this.IsEnabled)
             {
-                var element = this._driver.FindElementWithRetry(By.CssSelector(cssSelector));
+                var element = this._driver.FindElementWithRetry(By.CssSelector(cssSelector), isIngnoredIfNotFound: isIgnoredIfNotFound);
                 this._driver.JSClick(element);
             }
         }

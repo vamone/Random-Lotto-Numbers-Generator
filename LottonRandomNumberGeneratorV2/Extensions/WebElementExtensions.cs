@@ -45,6 +45,11 @@ namespace LottonRandomNumberGeneratorV2.Extensions
 
         public static void JSClick(this IWebDriver driver, IWebElement element)
         {
+            if(element == null)
+            {
+                return;
+            }
+
             IJavaScriptExecutor executor = (IJavaScriptExecutor)driver;
             executor.ExecuteScript("arguments[0].click();", element);
         }

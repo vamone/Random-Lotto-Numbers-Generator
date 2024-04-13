@@ -1,6 +1,7 @@
 ﻿public class CombinationAlgorithm : IAlgorithm
 {
     public AlgorithmType Type { get; } = AlgorithmType.Combination;
+
     public virtual List<List<int>> Generate(int maxNumber, int combinationLength)
     {
         var returnValue = new List<List<int>>();

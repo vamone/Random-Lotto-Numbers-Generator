@@ -21,7 +21,7 @@ namespace Tests
 
         [TestMethod]
         public void MyTestMethod()
-        {
+        { 
         }
 
         TheNationalLotteryWebsiteDriver GetTheNationalLotteryWebsite()
@@ -31,7 +31,7 @@ namespace Tests
 
         ~TheNationalLotteryWebsiteDriverTests()
         {
-            this._website.TearDown();
+            //this._website.();
         }
     }
 }

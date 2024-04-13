@@ -1,4 +1,6 @@
-﻿public class GameBox
+﻿using LottonRandomNumberGeneratorV2.Enums;
+
+public class GameBox
 {
     readonly IEnumerable<IGameConfig> _games;
 
@@ -25,9 +27,19 @@
         return this._games.SingleOrDefault(x => (int)x.Type == id);
     }
 
+    public IGameConfig GetGameByType(GameType type)
+    {
+        return this._games.SingleOrDefault(x => x.Type == type);
+    }
+
     public IAlgorithm GetAlgorithmById(int id)
     {
         return this._algorithms.SingleOrDefault(x => (int)x.Type == id);
+    }
+
+    public IAlgorithm GetAlgorithmByType(AlgorithmType type)
+    {
+        return this._algorithms.SingleOrDefault(x => x.Type == type);
     }
 
     public IEnumerable<string> GenerateNumbers(IGameConfig gameConfig, IAlgorithm algorithm, int numberOfGames)
@@ -60,9 +72,20 @@
             foreach (var configSet in gameConfig.Sets)
             {
                 var combinations = algorithm.Generate(configSet.MaxValueNumber, configSet.CombinationLength);
-
                 int combinationsCount = combinations.Count();
-                int chunkSize = combinationsCount / numberOfGames;
+
+                if (combinationsCount < numberOfGames)
+                {
+                    int intt = numberOfGames / combinationsCount;
+                    for (int k = 0; k < intt; k++)
+                    {
+                        var nextCombinations = algorithm.Generate(configSet.MaxValueNumber, configSet.CombinationLength);
+                        combinations.AddRange(nextCombinations);
+                    }
+                }
+
+                int nextCombinationsCount = combinations.Count();
+                int chunkSize = nextCombinationsCount / numberOfGames;
 
                 int j = i;
                 var chunked = combinations.Chunk(chunkSize)
@@ -81,7 +104,7 @@
             }
 
             var chunkedNumbers = dictionaryNumbers.OrderBy(_ => _.Key).Chunk(setsCount).ToList();
-            foreach(var chunk in chunkedNumbers)
+            foreach (var chunk in chunkedNumbers)
             {
                 returnResult.Add(this.FormatNumbers(chunk.Select(x => x.Value).ToList()));
             }

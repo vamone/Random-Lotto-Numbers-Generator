@@ -26,7 +26,7 @@ namespace Tests
 
         TheNationalLotteryWebsiteDriver GetTheNationalLotteryWebsite()
         {
-            return new TheNationalLotteryWebsiteDriver(new ChromeDriver());
+            return new TheNationalLotteryWebsiteDriver(new ChromeDriver(), null);
         }
 
         ~TheNationalLotteryWebsiteDriverTests()

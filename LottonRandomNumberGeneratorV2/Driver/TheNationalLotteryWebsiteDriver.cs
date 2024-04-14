@@ -86,14 +86,6 @@ namespace LottonRandomNumberGeneratorV2.Driver
             }
         }
 
-        public void GoToEuroMillionsPage()
-        {
-            if (this.IsEnabled)
-            {
-                this._driver.Navigate().GoToUrl(HomeUrl + "/games/euromillions");
-            }
-        }
-
         public void ChooseNumbersButton(int gameNumber)
         {
             if (this.IsEnabled)
@@ -138,6 +130,7 @@ namespace LottonRandomNumberGeneratorV2.Driver
             {
                 this._driver.Navigate().GoToUrl(url);
                 this.FindElementAndJSClick("#euromillions_dbg_play_page", isIgnoredIfNotFound: true);
+                this.FindElementAndJSClick("#js-cuk-htp-modal > div.cuk-htp-first-look-modal__inner > a", isIgnoredIfNotFound: true);
             }
         }
 

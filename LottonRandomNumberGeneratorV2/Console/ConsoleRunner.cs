@@ -1,4 +1,6 @@
-﻿using LottonRandomNumberGeneratorV2.Driver;
+﻿using LottonRandomNumberGeneratorV2.Console;
+using LottonRandomNumberGeneratorV2.Driver;
+using LottonRandomNumberGeneratorV2.Exceptions;
 using LottonRandomNumberGeneratorV2.Extensions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -37,72 +39,87 @@ public class ConsoleRunner
 
             IAlgorithm algorithm = this.RetryGet<IAlgorithm>("Select algorithm: ", (a) => this._gameBox.GetAlgorithmById(a));
 
-            int numberOfGames = 0;
-            while (numberOfGames == 0)
+            var numberOfGamesConfig = this.RetryGet<NumetricConfig>("Select number of games: ", (a) => this.GetNumetricConfig(a));
+
+            if (gameConfig != null && algorithm != null && numberOfGamesConfig.Number > 0)
             {
-                this._consoleDecorator.Write("Select number of games: ");
-                numberOfGames = this._consoleDecorator.ReadLine().ToInt32(); //Add validation numetric
-            }
+                var numbers = this.GenerateAndPrintNumbers(gameConfig, algorithm, numberOfGamesConfig.Number).ToList();
 
-            if (gameConfig != null && algorithm != null && numberOfGames > 0)
-            {
-                this._consoleDecorator.WriteLine($"Generating for {gameConfig.Type} using {algorithm.Type} algorithm for {numberOfGames} games...", WriteLineSeparator.Both);
-
-                var numbers = this._gameBox.GenerateNumbers(gameConfig, algorithm, numberOfGames);
-                this._consoleDecorator.WriteLineMultiple(numbers, x => x);
-
-                this._consoleDecorator.WriteLine("Buy:", WriteLineSeparator.Both);
-                this._consoleDecorator.WriteLineMultiple(new List<string> { "Yes", "No" }, x => x.ToString());
-                var toBuyConfig = this.RetryGet<IBoolConfig>("Select action: ", (a) => this.IsTrueIfEqualsTo(a, 1));
-
-                if (!toBuyConfig.IsValue)
+                bool isRetry = true;
+                while (isRetry)
                 {
-                    return;
-                }
+                    this._consoleDecorator.WriteLine("Next:", WriteLineSeparator.Both);
+                    this._consoleDecorator.WriteLineMultiple(new List<string> { "Regenerate", "Modify", "Buy" }, x => x.ToString());
 
-                this._website.SetEnabledValue(toBuyConfig.IsValue);
-
-                this._website.GoToHomePage();
-                this._website.AcceptCookies();
-                this._website.GoToLoginPage();
-                this._website.Login();
-
-                bool isRetryBrowser = true;
-                while (isRetryBrowser)
-                {
-                    this._website.GoToGamePage(gameConfig.Url);
-
-                    int i = 0;
-                    foreach (var item in numbers)
+                    var nextConfig = this.RetryGet<NumetricConfig>("Select action: ", (a) => new NumetricConfig { Number = a });
+                    if (nextConfig.Number == 1)
                     {
-                        var list = item.Split('|');
-
-                        var main = list.Count() > 0 ? list[0] : string.Empty;
-                        var starts = list.Count() > 1 ? list[1] : string.Empty;
-
-                        var mainArray = main.Split('-');
-                        var startsArray = starts.Split('-');
-
-                        this._website.ChooseNumbersButton(i);
-                        this._website.ChooseMainNumbers(mainArray);
-                        this._website.ChooseLuckyStartNumbers(startsArray);
-                        this._website.ConfirmButton();
-
-                        this._consoleDecorator.WriteLine($"Selected numbers: {item}", WriteLineSeparator.Before);
-
-                        i++;
+                        numbers = this.GenerateAndPrintNumbers(gameConfig, algorithm, numberOfGamesConfig.Number).ToList();
+                        continue;
                     }
 
-                    this._consoleDecorator.WriteLine("Try again:", WriteLineSeparator.Both);
-                    this._consoleDecorator.WriteLineMultiple(new List<string> { "Yes", "No" }, x => x.ToString());
-                    var toBuyConfigAgain = this.RetryGet<IBoolConfig>("Select action: ", (a) => this.IsTrueIfEqualsTo(a, 1));
-
-                    if(!toBuyConfigAgain.IsValue)
+                    if (nextConfig.Number == 2)
                     {
-                        isRetryBrowser = false;
-                        this._website.SetEnabledValue(false);
-                        this._consoleDecorator.WriteLine("End", WriteLineSeparator.Before);
+                        var indexes = this.RetryGetArray("Write comma separated ids for modification: ");
+                        foreach ( var index in indexes)
+                        {
+                            numbers[index - 1] = this._gameBox.GenerateNumbers(gameConfig, algorithm, 1).FirstOrDefault();
+                        }
+
+                        this.WriteLine(gameConfig, algorithm, numbers);
+
+                        continue;
                     }
+
+                    if (nextConfig.Number == 3)
+                    {
+                        this._website.SetEnabledValue(true);
+
+                        this._website.GoToHomePage();
+                        this._website.AcceptCookies();
+                        this._website.GoToLoginPage();
+                        this._website.Login();
+
+                        bool isRetryBrowser = true;
+                        while (isRetryBrowser)
+                        {
+                            this._website.GoToGamePage(gameConfig.Url);
+
+                            int i = 0;
+                            foreach (var item in numbers)
+                            {
+                                var list = item.Split('|');
+
+                                var main = list.Count() > 0 ? list[0] : string.Empty;
+                                var starts = list.Count() > 1 ? list[1] : string.Empty;
+
+                                var mainArray = main.Split('-');
+                                var startsArray = starts.Split('-');
+
+                                this._website.ChooseNumbersButton(i);
+                                this._website.ChooseMainNumbers(mainArray);
+                                this._website.ChooseLuckyStartNumbers(startsArray);
+                                this._website.ConfirmButton();
+
+                                this._consoleDecorator.WriteLine($"{i + 1}. Selected numbers: {item}");
+
+                                i++;
+                            }
+
+                            this._consoleDecorator.WriteLine("Try again:", WriteLineSeparator.Both);
+                            this._consoleDecorator.WriteLineMultiple(new List<string> { "Yes", "No" }, x => x.ToString());
+                            var toBuyConfigAgain = this.RetryGet<IBoolConfig>("Select action: ", (a) => this.IsTrueIfEqualsTo(a, 1));
+
+                            if (!toBuyConfigAgain.IsValue)
+                            {
+                                isRetryBrowser = false;
+                                this._website.SetEnabledValue(false);
+                                this._consoleDecorator.WriteLine("End", WriteLineSeparator.Before);
+                            }
+                        }
+                    }
+
+                    isRetry = false;
                 }
             }
         });
@@ -122,24 +139,84 @@ public class ConsoleRunner
         }
     }
 
+    IEnumerable<string> GenerateAndPrintNumbers(IGameConfig gameConfig, IAlgorithm algorithm, int numberOfGames)
+    {
+        var numbers = this._gameBox.GenerateNumbers(gameConfig, algorithm, numberOfGames);
+
+        this.WriteLine(gameConfig, algorithm, numbers);
+
+        return numbers;
+    }
+
+    void WriteLine(IGameConfig gameConfig, IAlgorithm algorithm, IEnumerable<string> numbers)
+    {
+        this._consoleDecorator.WriteLine($"Generating for {gameConfig.Type} using {algorithm.Type} algorithm for {numbers.Count()} games...", WriteLineSeparator.Both);
+        this._consoleDecorator.WriteLineMultiple(numbers, x => x);
+    }
+
     T RetryGet<T>(string writeLine, Func<int, T> value) where T : class
     {
         T returnValue = null;
 
         while (returnValue == null)
         {
-            this._consoleDecorator.Write(writeLine);
+            try
+            {
+                this._consoleDecorator.Write(writeLine);
 
-            int selectedOption = this._consoleDecorator.ReadLine().ToInt32(); //Add validation numetric
+                int selectedOption = this._consoleDecorator.ReadLine().ToInt32(); //Add validation numetric
 
-            returnValue = value.Invoke(selectedOption);
+                returnValue = value.Invoke(selectedOption);
+            }
+            catch
+            {
+            }
         }
 
         return returnValue;
     }
 
+    IEnumerable<int> RetryGetArray(string writeLine)
+    {
+        bool isRetry = true;
+        while (isRetry)
+        {
+            try
+            {
+                this._consoleDecorator.Write(writeLine);
+
+                string selectedOption = this._consoleDecorator.ReadLine();
+                if(selectedOption == null)
+                {
+                    continue;
+                }
+
+                return selectedOption.Split(",").Select(x =>
+                {
+                    int.TryParse(x, out int output);
+                    return output;
+                }).Where(x => x > 0);
+            }
+            catch
+            {
+            }
+        }
+
+        return Enumerable.Empty<int>();
+    }
+
+    NumetricConfig GetNumetricConfig(int value)
+    {
+        if (value <= 0)
+        {
+            throw new InvalidNumerticValueSelectedException();
+        }
+
+        return new NumetricConfig { Number = value };
+    }
+
     IBoolConfig IsTrueIfEqualsTo(int value, int equalsToValue)
     {
-        return new IBoolConfig { IsValue = value == equalsToValue };
+        return new BoolConfig { IsValue = value == equalsToValue };
     }
 }

@@ -1,9 +1,6 @@
-﻿using LottonRandomNumberGeneratorV2.Console;
-using LottonRandomNumberGeneratorV2.Driver;
+﻿using LottonRandomNumberGeneratorV2.Driver;
 using LottonRandomNumberGeneratorV2.Exceptions;
-using LottonRandomNumberGeneratorV2.Extensions;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+using LottonRandomNumberGeneratorV2.Models;
 
 public class ConsoleRunner
 {
@@ -11,15 +8,15 @@ public class ConsoleRunner
 
     readonly ConsoleBuilder _consoleBuilder;
 
-    readonly GameBox _gameBox;
+    readonly LottoEngine _lottoEngine;
 
     readonly TheNationalLotteryWebsiteDriver _website;
 
-    public ConsoleRunner(ConsoleDecorator consoleDecorator, ConsoleBuilder consoleBuilder, GameBox gameBox, TheNationalLotteryWebsiteDriver nationalLotteryWebsiteDriver)
+    public ConsoleRunner(ConsoleDecorator consoleDecorator, ConsoleBuilder consoleBuilder, LottoEngine lottoEngine, TheNationalLotteryWebsiteDriver nationalLotteryWebsiteDriver)
     {
         this._consoleDecorator = consoleDecorator;
         this._consoleBuilder = consoleBuilder;
-        this._gameBox = gameBox;
+        this._lottoEngine = lottoEngine;
         this._website = nationalLotteryWebsiteDriver;
     }
 
@@ -30,14 +27,14 @@ public class ConsoleRunner
             this._consoleDecorator.WriteLine("Lotto winning numbers generator");
 
             this._consoleDecorator.WriteLine("Games:", WriteLineSeparator.Both);
-            this._consoleDecorator.WriteLineMultiple(this._gameBox.GetGames(), x => x.Type.ToString());
+            this._consoleDecorator.WriteLineMultiple(this._lottoEngine.GetGames(), x => x.Type.ToString());
 
-            IGameConfig gameConfig = this.RetryGet<IGameConfig>("Select game: ", (a) => this._gameBox.GetGameById(a));
+            IGameConfig gameConfig = this.RetryGet<IGameConfig>("Select game: ", (a) => this._lottoEngine.GetGameById(a));
 
             this._consoleDecorator.WriteLine("Algorithms:", WriteLineSeparator.Both);
-            this._consoleDecorator.WriteLineMultiple(this._gameBox.GetAlgorithms(), x => x.Type.ToString());
+            this._consoleDecorator.WriteLineMultiple(this._lottoEngine.GetAlgorithms(), x => x.Type.ToString());
 
-            IAlgorithm algorithm = this.RetryGet<IAlgorithm>("Select algorithm: ", (a) => this._gameBox.GetAlgorithmById(a));
+            IAlgorithm algorithm = this.RetryGet<IAlgorithm>("Select algorithm: ", (a) => this._lottoEngine.GetAlgorithmById(a));
 
             var numberOfGamesConfig = this.RetryGet<NumetricConfig>("Select number of games: ", (a) => this.GetNumetricConfig(a));
 
@@ -63,7 +60,7 @@ public class ConsoleRunner
                         var indexes = this.RetryGetArray("Write comma separated ids for modification: ");
                         foreach ( var index in indexes)
                         {
-                            numbers[index - 1] = this._gameBox.GenerateNumbers(gameConfig, algorithm, 1).FirstOrDefault();
+                            numbers[index - 1] = this._lottoEngine.GenerateNumbers(gameConfig, algorithm, 1).FirstOrDefault();
                         }
 
                         this.WriteLine(gameConfig, algorithm, numbers);
@@ -96,14 +93,30 @@ public class ConsoleRunner
                                 var mainArray = main.Split('-');
                                 var startsArray = starts.Split('-');
 
-                                this._website.ChooseNumbersButton(i);
-                                this._website.ChooseMainNumbers(mainArray);
-                                this._website.ChooseLuckyStartNumbers(startsArray);
-                                this._website.ConfirmButton();
+                                try
+                                {
+                                    this._website.ChooseNumbersButton(i);
+                                    this._website.ChooseMainNumbers(mainArray);
+                                    this._website.ChooseLuckyStartNumbers(startsArray);
+                                    this._website.ConfirmButton();
 
-                                this._consoleDecorator.WriteLine($"{i + 1}. Selected numbers: {item}");
+                                    this._consoleDecorator.WriteLine($"{i + 1}. Picked numbers: {item}");
 
-                                i++;
+                                    i++;
+                                }
+                                catch (Exception ex)
+                                {
+                                    this._consoleDecorator.WriteLine($"Error: {ex.Message}", WriteLineSeparator.Both);
+                                    this._consoleDecorator.WriteLineMultiple(new List<string> { "Ignore", "End play" }, x => x.ToString());
+
+                                    var onErrorConfig = this.RetryGet<IBoolConfig>("Select action: ", (a) => this.IsTrueIfEqualsTo(a, 1));
+                                    if(!onErrorConfig.IsValue)
+                                    {
+                                        isRetryBrowser = false;
+                                        this._website.SetEnabledValue(false);
+                                        this._consoleDecorator.WriteLine("End play", WriteLineSeparator.Before);
+                                    }
+                                }
                             }
 
                             this._consoleDecorator.WriteLine("Try again:", WriteLineSeparator.Both);
@@ -114,7 +127,7 @@ public class ConsoleRunner
                             {
                                 isRetryBrowser = false;
                                 this._website.SetEnabledValue(false);
-                                this._consoleDecorator.WriteLine("End", WriteLineSeparator.Before);
+                                this._consoleDecorator.WriteLine("End play", WriteLineSeparator.Before);
                             }
                         }
                     }
@@ -141,7 +154,7 @@ public class ConsoleRunner
 
     IEnumerable<string> GenerateAndPrintNumbers(IGameConfig gameConfig, IAlgorithm algorithm, int numberOfGames)
     {
-        var numbers = this._gameBox.GenerateNumbers(gameConfig, algorithm, numberOfGames);
+        var numbers = this._lottoEngine.GenerateNumbers(gameConfig, algorithm, numberOfGames);
 
         this.WriteLine(gameConfig, algorithm, numbers);
 

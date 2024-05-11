@@ -1,12 +1,10 @@
-﻿using LottonRandomNumberGeneratorV2.Enums;
-
-public class GameBox
+﻿public class LottoEngine
 {
     readonly IEnumerable<IGameConfig> _games;
 
     readonly IEnumerable<IAlgorithm> _algorithms;
 
-    public GameBox(IEnumerable<IGameConfig> games, IEnumerable<IAlgorithm> algorithms)
+    public LottoEngine(IEnumerable<IGameConfig> games, IEnumerable<IAlgorithm> algorithms)
     {
         this._games = games;
         this._algorithms = algorithms;

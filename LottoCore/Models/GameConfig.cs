@@ -17,10 +17,11 @@ public interface IGameConfig
 
 public class GameConfig : IGameConfig
 {
-    public GameConfig(GameType type)
+    public GameConfig(GameType type, int maxGamesCount)
     {
         this.Type = type;
         this.Name = type.ToString();
+        this.MaxGamesCount = maxGamesCount;
     }
 
     public GameType Type { get; private set; } = GameType.None;
@@ -28,6 +29,8 @@ public class GameConfig : IGameConfig
     public string Name { get; private set; }
 
     public List<ISetConfig> Sets { get; private set; } = new List<ISetConfig>();
+
+    public int MaxGamesCount { get; private set; }
 
     public IGameConfig ConfigSetOfNumbers(GameSetType gameSetType, int maxNumber, int combinationLength)
     {
@@ -55,7 +58,7 @@ public interface ISetConfig
 
 public class SetConfig : ISetConfig
 {
-    public SetConfig(GameSetType gameSetType,int maxValueNumber, int combinationLength)
+    public SetConfig(GameSetType gameSetType, int maxValueNumber, int combinationLength)
     {
         this.GameSetType = gameSetType;
         this.MaxValueNumber = maxValueNumber;

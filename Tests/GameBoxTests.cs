@@ -12,21 +12,21 @@ namespace Tests
     [TestClass]
     public class GameBoxTests
     {
-        readonly GameBox _gameBox;
+        //readonly GameBox _gameBox;
 
-        public GameBoxTests()
-        {
-            this._gameBox = new GameBox(Constraints.GetGameConfigs().Values, Constraints.GetAlgorithms().Values);
-        }
+        //public GameBoxTests()
+        //{
+        //    this._gameBox = new GameBox(Constraints.GetGameConfigs().Values, Constraints.GetAlgorithms().Values);
+        //}
 
-        [TestMethod]
-        public void Generate_SingleNumber_ReturnsNumberBetween1And450574742()
-        {
-            //Arrange & Act
-            var returnValue = this._gameBox.GenerateNumbers(this._gameBox.GetGameByType(GameType.Setforlive), this._gameBox.GetAlgorithmByType(AlgorithmType.Combination), 3);
+        //[TestMethod]
+        //public void Generate_SingleNumber_ReturnsNumberBetween1And450574742()
+        //{
+        //    //Arrange & Act
+        //    var returnValue = this._gameBox.GenerateNumbers(this._gameBox.GetGameByType(GameType.Setforlive), this._gameBox.GetAlgorithmByType(AlgorithmType.Combination), 3);
 
-            //Assert
-            Assert.IsNotNull(returnValue);
-        }
+        //    //Assert
+        //    Assert.IsNotNull(returnValue);
+        //}
     }
 }

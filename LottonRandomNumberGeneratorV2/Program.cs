@@ -10,7 +10,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile($"appsettings.json")
+    //.AddJsonFile($"appsettings.json")
+    .AddJsonFile("C:\\GIT\\Random-Lotto-Numbers-Generator\\LottonRandomNumberGeneratorV2\\bin\\Release\\net6.0\\appsettings.json")
     .AddUserSecrets<Program>()
     .Build();
 
@@ -18,17 +19,17 @@ builder.Services.AddTransient<ConsoleRunner>();
 builder.Services.AddTransient<ConsoleDecorator>();
 builder.Services.AddTransient<ConsoleBuilder>();
 
-foreach (var algorithm in Constraints.GetAlgorithms())
+foreach (var algorithm in Constants.GetAlgorithms())
 {
     builder.Services.AddTransient<IAlgorithm>(x => algorithm.Value);
 }
 
-foreach (var gameConfig in Constraints.GetGameConfigs())
+foreach (var gameConfig in Constants.GetGameConfigs())
 {
     builder.Services.AddTransient<IGameConfig>(x => gameConfig.Value);
 }
 
-builder.Services.AddTransient<GameBox>();
+builder.Services.AddTransient<LottoEngine>();
 builder.Services.AddTransient<TheNationalLotteryWebsiteDriver>(x => new TheNationalLotteryWebsiteDriver(null, x.GetService<IOptions<LoginConfig>>()));
 
 builder.Services.Configure<LoginConfig>(config.GetSection(LoginConfig.ConfigBinding));

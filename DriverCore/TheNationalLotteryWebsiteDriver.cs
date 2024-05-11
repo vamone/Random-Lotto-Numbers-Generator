@@ -98,7 +98,8 @@ namespace LottonRandomNumberGeneratorV2.Driver
         {
             if (this.IsEnabled)
             {
-                foreach (var number in numbers)
+                var trimmedNumbers = numbers.Where(x => !string.IsNullOrWhiteSpace(x));
+                foreach (var number in trimmedNumbers)
                 {
                     this.FindElementAndJSClick($"#pool_0_label_ball_{number.Trim()}");
                 }
@@ -109,7 +110,8 @@ namespace LottonRandomNumberGeneratorV2.Driver
         {
             if (this.IsEnabled)
             {
-                foreach (var number in numbers)
+                var trimmedNumbers = numbers.Where(x => !string.IsNullOrWhiteSpace(x));
+                foreach (var number in trimmedNumbers)
                 {
                     this.FindElementAndJSClick($"#pool_1_label_ball_{number.Trim()}");
                 }

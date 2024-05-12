@@ -1,4 +1,9 @@
-﻿public class LottoEngine
+﻿public interface ILottoEngine
+{
+
+}
+
+public class LottoEngine : ILottoEngine
 {
     readonly IEnumerable<IGameConfig> _games;
 

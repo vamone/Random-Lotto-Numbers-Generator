@@ -6,6 +6,8 @@ namespace RetroConsoleLook
     {
         int _index = 0;
 
+        bool _isFirstIndexSelected = false;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ConsolePage(string title, List<string> items)
@@ -29,6 +31,12 @@ namespace RetroConsoleLook
                     this.OnPropertyChanged(nameof(this.Index));
                 }
             }
+        }
+
+        public bool IsIndexSelected
+        {
+            get { return this._isFirstIndexSelected; }
+            set { this._isFirstIndexSelected = value; }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

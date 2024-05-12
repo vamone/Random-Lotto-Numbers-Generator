@@ -19,9 +19,9 @@
         <StackPanel Orientation="Vertical" Margin="10">
             <TextBlock x:Name="textBlockHeadline">Lotto winning numbers generator</TextBlock>
             <TextBlock>---</TextBlock>
-            <StackPanel x:Name="stackPanelConsoleOutput" Orientation="Vertical">
-
-            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Visible">
+                <StackPanel x:Name="stackPanelConsoleOutput" Orientation="Vertical"></StackPanel>
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </Window>

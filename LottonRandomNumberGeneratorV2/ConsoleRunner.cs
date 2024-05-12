@@ -116,6 +116,8 @@ public class ConsoleRunner
                                         this._website.SetEnabledValue(false);
                                         this._consoleDecorator.WriteLine("End play", WriteLineSeparator.Before);
                                     }
+
+                                    i = 0;
                                 }
                             }
 

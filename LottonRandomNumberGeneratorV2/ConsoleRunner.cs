@@ -83,6 +83,8 @@ public class ConsoleRunner
                             this._website.GoToGamePage(gameConfig.Url);
 
                             int i = 0;
+                            int ignoreCount = 0;
+
                             foreach (var item in numbers)
                             {
                                 var list = item.Split('|');
@@ -117,7 +119,9 @@ public class ConsoleRunner
                                         this._consoleDecorator.WriteLine("End play", WriteLineSeparator.Before);
                                     }
 
+                                    ignoreCount++;
                                     i = 0;
+                                    continue;
                                 }
                             }
 
